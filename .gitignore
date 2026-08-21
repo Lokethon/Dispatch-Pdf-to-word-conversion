@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+bot.log
+*.pdf
+*.docx
+test_output/
