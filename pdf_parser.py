@@ -256,26 +256,36 @@ def _extract_ship_to(text: str) -> dict:
             f"Ship To section has too few lines: {ship_to_lines}"
         )
 
-    # Deduplicate side-by-side columns (e.g. "Roshini Vijay Roshini Vijay")
+    # Deduplicate side-by-side columns (e.g. "Roshini Vijay Roshini Vijay" or partial overlaps)
     cleaned_lines = []
+    
+    def alnum(x): 
+        return re.sub(r'[^a-zA-Z0-9]', '', x).lower()
+
     for line in ship_to_lines:
         clean = re.sub(r'\s+', ' ', line).strip()
         
-        # Check word-based exact halves
-        words = clean.split()
-        if len(words) > 0 and len(words) % 2 == 0:
-            half = len(words) // 2
-            if words[:half] == words[half:]:
-                clean = " ".join(words[:half])
+        # Try to find if the string is composed of two overlapping/repeating parts
+        deduped = clean
+        for i in range(10, len(clean) - 5):
+            if clean[i] == ' ':
+                left = clean[:i].strip()
+                right = clean[i:].strip()
                 
-        # Check comma-based exact halves (e.g. "Peta, Peta")
-        parts = [p.strip() for p in clean.split(',') if p.strip()]
-        if len(parts) > 0 and len(parts) % 2 == 0:
-            half = len(parts) // 2
-            if parts[:half] == parts[half:]:
-                clean = ", ".join(parts[:half])
+                a_left = alnum(left)
+                a_right = alnum(right)
                 
-        cleaned_lines.append(clean)
+                if len(a_left) < 8 or len(a_right) < 8:
+                    continue
+                    
+                if a_right.startswith(a_left):
+                    deduped = right
+                    break
+                if a_left.startswith(a_right):
+                    deduped = left
+                    break
+                    
+        cleaned_lines.append(deduped)
         
     ship_to_lines = cleaned_lines
 
