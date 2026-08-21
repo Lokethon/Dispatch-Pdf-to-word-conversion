@@ -81,13 +81,16 @@ def _add_order_to_doc(doc: Document, order: dict, is_first_on_page: bool = False
     """Add a single dispatch label to the document."""
 
     # Indentation for customer details
-    indent = Inches(0.5)
+    left_indent = Inches(0.5)
+    # Restrict the width of the label to match the highlighted box (so it acts like a sticker)
+    right_indent = Inches(3.0)
 
     # Line 1: "Order Id: #DXXXXX" (bold, no indent)
     para = doc.add_paragraph()
     para.paragraph_format.space_after = Pt(0)
     # Add space before the order if it's not the first on the page
     para.paragraph_format.space_before = Pt(0) if is_first_on_page else Pt(36)
+    para.paragraph_format.right_indent = right_indent
     
     run = para.add_run(f"Order Id: #D{order['order_id']}")
     run.bold = True
@@ -98,6 +101,7 @@ def _add_order_to_doc(doc: Document, order: dict, is_first_on_page: bool = False
     para = doc.add_paragraph()
     para.paragraph_format.space_after = Pt(0)
     para.paragraph_format.space_before = Pt(0)
+    para.paragraph_format.right_indent = right_indent
     run = para.add_run("To")
     run.bold = True
     run.font.size = Pt(14)
@@ -107,7 +111,8 @@ def _add_order_to_doc(doc: Document, order: dict, is_first_on_page: bool = False
     para = doc.add_paragraph()
     para.paragraph_format.space_after = Pt(0)
     para.paragraph_format.space_before = Pt(0)
-    para.paragraph_format.left_indent = indent
+    para.paragraph_format.left_indent = left_indent
+    para.paragraph_format.right_indent = right_indent
     run = para.add_run(order["customer_name"])
     run.bold = True
     run.font.size = Pt(14)
@@ -118,7 +123,8 @@ def _add_order_to_doc(doc: Document, order: dict, is_first_on_page: bool = False
         para = doc.add_paragraph()
         para.paragraph_format.space_after = Pt(0)
         para.paragraph_format.space_before = Pt(0)
-        para.paragraph_format.left_indent = indent
+        para.paragraph_format.left_indent = left_indent
+        para.paragraph_format.right_indent = right_indent
         run = para.add_run(order["address_line1"])
         run.bold = False
         run.font.size = Pt(14)
@@ -129,7 +135,8 @@ def _add_order_to_doc(doc: Document, order: dict, is_first_on_page: bool = False
         para = doc.add_paragraph()
         para.paragraph_format.space_after = Pt(0)
         para.paragraph_format.space_before = Pt(0)
-        para.paragraph_format.left_indent = indent
+        para.paragraph_format.left_indent = left_indent
+        para.paragraph_format.right_indent = right_indent
         
         # Format 2 requires a period at the end of the pincode line
         addr2 = order["address_line2"].strip()
@@ -146,7 +153,8 @@ def _add_order_to_doc(doc: Document, order: dict, is_first_on_page: bool = False
         para = doc.add_paragraph()
         para.paragraph_format.space_after = Pt(0)
         para.paragraph_format.space_before = Pt(0)
-        para.paragraph_format.left_indent = indent
+        para.paragraph_format.left_indent = left_indent
+        para.paragraph_format.right_indent = right_indent
         # "Ph:" in bold
         run_label = para.add_run("Ph: ")
         run_label.bold = True
