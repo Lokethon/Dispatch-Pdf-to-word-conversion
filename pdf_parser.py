@@ -256,6 +256,29 @@ def _extract_ship_to(text: str) -> dict:
             f"Ship To section has too few lines: {ship_to_lines}"
         )
 
+    # Deduplicate side-by-side columns (e.g. "Roshini Vijay Roshini Vijay")
+    cleaned_lines = []
+    for line in ship_to_lines:
+        clean = re.sub(r'\s+', ' ', line).strip()
+        
+        # Check word-based exact halves
+        words = clean.split()
+        if len(words) > 0 and len(words) % 2 == 0:
+            half = len(words) // 2
+            if words[:half] == words[half:]:
+                clean = " ".join(words[:half])
+                
+        # Check comma-based exact halves (e.g. "Peta, Peta")
+        parts = [p.strip() for p in clean.split(',') if p.strip()]
+        if len(parts) > 0 and len(parts) % 2 == 0:
+            half = len(parts) // 2
+            if parts[:half] == parts[half:]:
+                clean = ", ".join(parts[:half])
+                
+        cleaned_lines.append(clean)
+        
+    ship_to_lines = cleaned_lines
+
     # Parse the Ship To lines
     name = ""
     address_parts = []
