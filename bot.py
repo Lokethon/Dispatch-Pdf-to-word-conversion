@@ -169,6 +169,15 @@ async def on_message(message: discord.Message):
                 errors.append(error_msg)
                 logger.error(f"   {error_msg}")
 
+        # Deduplicate orders by order_id to prevent duplicates in the document
+        unique_orders = []
+        seen_ids = set()
+        for order in all_orders:
+            if order["order_id"] not in seen_ids:
+                unique_orders.append(order)
+                seen_ids.add(order["order_id"])
+        all_orders = unique_orders
+
         # Stop the loading animation
         animation_running.clear()
         await animation_task
