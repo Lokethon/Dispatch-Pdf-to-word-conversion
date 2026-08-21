@@ -75,8 +75,8 @@ def generate_dispatch_word(
             else:
                 # Add a separator line between orders on same page
                 para = doc.add_paragraph()
-                para.paragraph_format.space_before = Pt(8)
-                para.paragraph_format.space_after = Pt(8)
+                para.paragraph_format.space_before = Pt(24)
+                para.paragraph_format.space_after = Pt(24)
                 run = para.add_run("─" * 40)
                 run.font.size = Pt(8)
                 run.font.color.rgb = None  # Default color
