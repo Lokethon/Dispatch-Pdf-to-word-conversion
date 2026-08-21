@@ -55,7 +55,7 @@ def generate_dispatch_word(
     style = doc.styles["Normal"]
     font = style.font
     font.name = "Arial"
-    font.size = Pt(14)
+    font.size = Pt(12)
 
     # Set margins
     for section in doc.sections:
@@ -94,7 +94,7 @@ def _add_order_to_doc(doc: Document, order: dict, is_first_on_page: bool = False
     
     run = para.add_run(f"Order Id: #D{order['order_id']}")
     run.bold = True
-    run.font.size = Pt(14)
+    run.font.size = Pt(12)
     run.font.name = "Arial"
 
     # Line 2: "To" (bold, no indent)
@@ -104,7 +104,7 @@ def _add_order_to_doc(doc: Document, order: dict, is_first_on_page: bool = False
     para.paragraph_format.right_indent = right_indent
     run = para.add_run("To")
     run.bold = True
-    run.font.size = Pt(14)
+    run.font.size = Pt(12)
     run.font.name = "Arial"
 
     # Line 3: Customer Name (bold, indented)
@@ -115,7 +115,7 @@ def _add_order_to_doc(doc: Document, order: dict, is_first_on_page: bool = False
     para.paragraph_format.right_indent = right_indent
     run = para.add_run(order["customer_name"])
     run.bold = True
-    run.font.size = Pt(14)
+    run.font.size = Pt(12)
     run.font.name = "Arial"
 
     # Line 4: Address Line 1 (normal, indented)
@@ -127,7 +127,7 @@ def _add_order_to_doc(doc: Document, order: dict, is_first_on_page: bool = False
         para.paragraph_format.right_indent = right_indent
         run = para.add_run(order["address_line1"])
         run.bold = False
-        run.font.size = Pt(14)
+        run.font.size = Pt(12)
         run.font.name = "Arial"
 
     # Line 5: City, State - Pincode (normal, indented)
@@ -145,7 +145,7 @@ def _add_order_to_doc(doc: Document, order: dict, is_first_on_page: bool = False
             
         run = para.add_run(addr2)
         run.bold = False
-        run.font.size = Pt(14)
+        run.font.size = Pt(12)
         run.font.name = "Arial"
 
     # Line 6: "Ph: XXXXXXXXXX" (Ph: bold, number normal, indented)
@@ -158,12 +158,12 @@ def _add_order_to_doc(doc: Document, order: dict, is_first_on_page: bool = False
         # "Ph:" in bold
         run_label = para.add_run("Ph: ")
         run_label.bold = True
-        run_label.font.size = Pt(14)
+        run_label.font.size = Pt(12)
         run_label.font.name = "Arial"
         # Phone number in normal
         run_number = para.add_run(order["phone"])
         run_number.bold = False
-        run_number.font.size = Pt(14)
+        run_number.font.size = Pt(12)
         run_number.font.name = "Arial"
 
 
