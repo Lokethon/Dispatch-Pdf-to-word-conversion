@@ -65,29 +65,19 @@ def generate_dispatch_word(
         section.right_margin = Pt(54)
 
     for i, order in enumerate(orders):
-        _add_order_to_doc(doc, order)
+        is_first = (i % 3 == 0)
+        _add_order_to_doc(doc, order, is_first_on_page=is_first)
 
-        # Add spacing between orders on the same page
+        # Add spacing between orders on the same page (page break every 3rd order)
         if i < len(orders) - 1:
-            # Add page break after every 3rd order
             if (i + 1) % 3 == 0:
                 doc.add_page_break()
-            else:
-                # Add a separator line between orders on same page
-                para = doc.add_paragraph()
-                para.paragraph_format.space_before = Pt(24)
-                para.paragraph_format.space_after = Pt(24)
-                run = para.add_run("─" * 40)
-                run.font.size = Pt(8)
-                run.font.color.rgb = None  # Default color
-                from docx.shared import RGBColor
-                run.font.color.rgb = RGBColor(0xCC, 0xCC, 0xCC)
 
     doc.save(output_path)
     return output_path
 
 
-def _add_order_to_doc(doc: Document, order: dict):
+def _add_order_to_doc(doc: Document, order: dict, is_first_on_page: bool = False):
     """Add a single dispatch label to the document."""
 
     # Indentation for customer details
@@ -96,7 +86,9 @@ def _add_order_to_doc(doc: Document, order: dict):
     # Line 1: "Order Id: #DXXXXX" (bold, no indent)
     para = doc.add_paragraph()
     para.paragraph_format.space_after = Pt(0)
-    para.paragraph_format.space_before = Pt(0)
+    # Add space before the order if it's not the first on the page
+    para.paragraph_format.space_before = Pt(0) if is_first_on_page else Pt(36)
+    
     run = para.add_run(f"Order Id: #D{order['order_id']}")
     run.bold = True
     run.font.size = Pt(14)
@@ -138,7 +130,13 @@ def _add_order_to_doc(doc: Document, order: dict):
         para.paragraph_format.space_after = Pt(0)
         para.paragraph_format.space_before = Pt(0)
         para.paragraph_format.left_indent = indent
-        run = para.add_run(order["address_line2"])
+        
+        # Format 2 requires a period at the end of the pincode line
+        addr2 = order["address_line2"].strip()
+        if not addr2.endswith('.'):
+            addr2 += '.'
+            
+        run = para.add_run(addr2)
         run.bold = False
         run.font.size = Pt(14)
         run.font.name = "Arial"

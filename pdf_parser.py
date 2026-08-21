@@ -344,8 +344,8 @@ def _extract_ship_to(text: str) -> dict:
     else:
         address_line2 = ""
 
-    # address_line1 is the street address
-    address_line1 = ", ".join(address_parts) if address_parts else ""
+    # address_line1 is the street address (preserve original newlines)
+    address_line1 = "\n".join(address_parts) if address_parts else ""
 
     # Clean up: remove email addresses (e.g., "Email: xyz@gmail.com")
     address_line1 = re.sub(
@@ -358,10 +358,10 @@ def _extract_ship_to(text: str) -> dict:
         r",?\s*India\b", "", address_line1, flags=re.IGNORECASE
     ).strip()
 
-    # Clean up stray trailing/leading commas and extra spaces
-    address_line1 = re.sub(r",\s*,", ",", address_line1)  # double commas
-    address_line1 = re.sub(r",\s*$", "", address_line1).strip()  # trailing comma
-    address_line1 = re.sub(r"^\s*,", "", address_line1).strip()  # leading comma
+    # Clean up double commas, but preserve valid trailing commas at end of lines
+    address_line1 = re.sub(r",\s*,", ",", address_line1)
+    # Remove leading commas from any line
+    address_line1 = re.sub(r"(?m)^\s*,", "", address_line1).strip()
 
     return {
         "name": name,
